@@ -10,10 +10,12 @@ import 'package:jwt_decoder/jwt_decoder.dart';
 final storage = FlutterSecureStorage();
 
 void main() {
+  
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  
   Future<String?> _getUserRole() async {
     final token = await storage.read(key: 'jwt_token');
     if (token == null) {
