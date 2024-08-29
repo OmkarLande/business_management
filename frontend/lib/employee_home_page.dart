@@ -16,7 +16,8 @@ class _EmployeeHomePageState extends State<EmployeeHomePage> with SingleTickerPr
   List<Map<String, dynamic>> _pendingRequests = [];
   bool _isLoadingBusinesses = true;
   bool _isLoadingRequests = true;
-  String? _error;
+  String? _business_error;
+  String? _request_error;
 
   @override
   void initState() {
@@ -39,13 +40,13 @@ class _EmployeeHomePageState extends State<EmployeeHomePage> with SingleTickerPr
 
     try {
       final response = await http.post(
-        Uri.parse('http://localhost:5000/api/business/employees/business'),
+        Uri.parse('http://10.0.2.2:5000/api/business/employees/buisness'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',
         },
       );
-
+      // print("Response: ${response.body}");
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         setState(() {
@@ -54,17 +55,18 @@ class _EmployeeHomePageState extends State<EmployeeHomePage> with SingleTickerPr
         });
       } else {
         setState(() {
-          _error = 'Failed to load businesses';
+          _business_error = 'Failed to load businesses';
           _isLoadingBusinesses = false;
         });
       }
     } catch (e) {
       print('Error: ${e.toString()}');
       setState(() {
-        _error = 'Error: ${e.toString()}';
+        _business_error = 'Error: ${e.toString()}';
         _isLoadingBusinesses = false;
       });
     }
+    // print("Businesses: $_businesses");
   }
 
   Future<void> _fetchPendingRequests() async {
@@ -80,20 +82,17 @@ class _EmployeeHomePageState extends State<EmployeeHomePage> with SingleTickerPr
 
     try {
       final response = await http.post(
-        Uri.parse('http://localhost:5000/api/auth/pending'),
+        Uri.parse('http://10.0.2.2:5000/api/auth/pending'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',
         },
       );
-      print(response.body);
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         final userList = data['user'] as List<dynamic>;
-        for (var item in userList) {
-          print(item);
-        }
+        
         setState(() {
           _pendingRequests = userList.map((item) {
             return {
@@ -103,19 +102,92 @@ class _EmployeeHomePageState extends State<EmployeeHomePage> with SingleTickerPr
             };
           }).toList();
           _isLoadingRequests = false;
-        });
+        
+        }
+        );
+          
       } else {
         setState(() {
-          _error = 'Failed to load pending requests';
+          _request_error = 'Failed to load pending requests';
           _isLoadingRequests = false;
         });
       }
     } catch (e) {
       print('Error: ${e.toString()}');
       setState(() {
-        _error = 'Error: ${e.toString()}';
+        _request_error = 'Error: ${e.toString()}';
         _isLoadingRequests = false;
       });
+    }
+    // print("Pending Requests: $_pendingRequests");
+  }
+
+  Future<void> _acceptRequest(String businessId) async {
+    final token = await storage.read(key: 'jwt_token');
+    if (token == null) {
+      Navigator.pushReplacementNamed(context, '/login');
+      return;
+    }
+
+    try {
+      final response = await http.post(
+        Uri.parse('http://10.0.2.2:5000/api/business/accept'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: json.encode({'businessId': businessId}),
+      );
+      // print("Business ID: $businessId");
+      // print("Response: ${response.body}");
+      // print("Status Code: ${response.statusCode}");
+      if (response.statusCode == 200) {
+        // Successfully accepted the request, refresh pending requests
+        _fetchPendingRequests();
+        _fetchBusinesses(); // Optionally refresh businesses if needed
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to accept request')),
+        );
+      }
+    } catch (e) {
+      print('Error: ${e.toString()}');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: ${e.toString()}')),
+      );
+    }
+  }
+
+  Future<void> _rejectRequest(String businessId) async {
+    final token = await storage.read(key: 'jwt_token');
+    if (token == null) {
+      Navigator.pushReplacementNamed(context, '/login');
+      return;
+    }
+
+    try {
+      final response = await http.post(
+        Uri.parse('http://10.0.2.2:5000/api/business/reject'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: json.encode({'businessId': businessId}),
+      );
+
+      if (response.statusCode == 200) {
+        // Successfully rejected the request, refresh pending requests
+        _fetchPendingRequests();
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to reject request')),
+        );
+      }
+    } catch (e) {
+      print('Error: ${e.toString()}');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: ${e.toString()}')),
+      );
     }
   }
 
@@ -145,8 +217,8 @@ class _EmployeeHomePageState extends State<EmployeeHomePage> with SingleTickerPr
   Widget _buildBusinessesTab() {
     return _isLoadingBusinesses
         ? Center(child: CircularProgressIndicator())
-        : _error != null
-            ? Center(child: Text(_error!))
+        : _business_error != null
+            ? Center(child: Text(_business_error!))
             : ListView.builder(
                 itemCount: _businesses.length,
                 itemBuilder: (context, index) {
@@ -166,14 +238,15 @@ class _EmployeeHomePageState extends State<EmployeeHomePage> with SingleTickerPr
 
   Widget _buildPendingRequestsTab() {
     return _isLoadingRequests
-        ? Center(child: CircularProgressIndicator())
-        : _error != null
-            ? Center(child: Text(_error!))
+        ? const Center(child: CircularProgressIndicator())
+        : _request_error != null
+            ? Center(child: Text(_request_error!))
             : ListView.builder(
                 itemCount: _pendingRequests.length,
                 itemBuilder: (context, index) {
                   final request = _pendingRequests[index];
                   final businessName = request['businessName'] ?? 'No Business Name';
+                  final businessId = request['businessId'];
 
                   return Card(
                     margin: const EdgeInsets.symmetric(vertical: 8.0),
@@ -186,13 +259,13 @@ class _EmployeeHomePageState extends State<EmployeeHomePage> with SingleTickerPr
                           IconButton(
                             icon: Icon(Icons.check),
                             onPressed: () {
-                              // Handle accept request
+                              _acceptRequest(businessId);
                             },
                           ),
                           IconButton(
                             icon: Icon(Icons.close),
                             onPressed: () {
-                              // Handle decline request
+                              _rejectRequest(businessId);
                             },
                           ),
                         ],

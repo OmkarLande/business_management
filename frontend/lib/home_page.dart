@@ -51,7 +51,7 @@ class _HomePageState extends State<HomePage> {
         });
       }
       final response = await http.get(
-        Uri.parse('http://localhost:5000/api/business/all'),
+        Uri.parse('http://10.0.2.2:5000/api/business/all'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token', // Ensure token is sent in the header

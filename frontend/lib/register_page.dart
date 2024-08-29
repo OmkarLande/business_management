@@ -21,7 +21,7 @@ class _RegisterPageState extends State<RegisterPage> {
   void _register(String role) async {
     if (_formKey.currentState!.validate()) {
       final response = await http.post(
-        Uri.parse('http://localhost:5000/api/auth/register'),
+        Uri.parse('http://10.0.2.2:5000/api/auth/register'),
         headers: {'Content-Type': 'application/json'},
         body: json.encode({
           'name': _nameController.text,

@@ -67,34 +67,67 @@ exports.createBusiness = async (req, res) => {
 };
 
   
-  
-  exports.acceptRequest = async (req, res) => {
-    const { businessId } = req.body;
-    const userId = req.user.id; 
-  
-    try {
-      const business = await Business.findById(businessId);
-      if (!business) {
-        return res.status(404).json({ error: 'Business not found' });
-      }
-  
-      // Check if request is pending
-      const requestIndex = business.pendingRequests.findIndex(req => req.email === req.user.email && req.status === 'pending');
-      if (requestIndex === -1) {
-        return res.status(400).json({ error: 'No pending request found' });
-      }
-  
-      // Update request status and add employee to the business
-      business.pendingRequests[requestIndex].status = 'accepted';
-      business.employees.push(userId);
-      await business.save();
-  
-      res.status(200).json({ message: 'Request accepted successfully' });
-    } catch (error) {
-      res.status(500).json({ error: error.message });
+// Accept Request
+exports.acceptRequest = async (req, res) => {
+  const { businessId } = req.body;
+  const userId = req.user.id;
+
+  try {
+    const business = await Business.findById(businessId);
+    if (!business) {
+      return res.status(404).json({ error: 'Business not found' });
     }
-  };
-  
+
+    // Add employee to the business
+    business.employees.push(userId);
+
+    // Remove the request from pendingRequests
+    business.pendingRequests = business.pendingRequests.filter(req => req.email !== req.user.email);
+
+    // Save the updated business document
+    await business.save();
+
+    // Remove the business request from the user's businessRequests
+    const user = await User.findById(userId);
+    user.businessRequests = user.businessRequests.filter(req => req.businessId.toString() !== businessId);
+    await user.save();
+
+    res.status(200).json({ message: 'Request accepted successfully' });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// Reject Request
+exports.rejectRequest = async (req, res) => {
+  const { businessId } = req.body;
+  const userId = req.user.id;
+
+  try {
+    const business = await Business.findById(businessId);
+    if (!business) {
+      return res.status(404).json({ error: 'Business not found' });
+    }
+
+    // Remove the request from pendingRequests
+    business.pendingRequests = business.pendingRequests.filter(req => req.email !== req.user.email);
+
+    // Save the updated business document
+    await business.save();
+
+    // Remove the business request from the user's businessRequests
+    const user = await User.findById(userId);
+    user.businessRequests = user.businessRequests.filter(req => req.businessId.toString() !== businessId);
+    await user.save();
+
+    res.status(200).json({ message: 'Request rejected successfully' });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+
+
 exports.showBusinesses = async (req, res) => {
     const userId = req.user.id; 
   
