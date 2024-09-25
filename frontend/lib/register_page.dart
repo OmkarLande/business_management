@@ -21,7 +21,7 @@ class _RegisterPageState extends State<RegisterPage> {
   void _register(String role) async {
     if (_formKey.currentState!.validate()) {
       final response = await http.post(
-        Uri.parse('http://10.0.2.2:5000/api/auth/register'),
+        Uri.parse('http://localhost:5000/api/auth/register'),
         headers: {'Content-Type': 'application/json'},
         body: json.encode({
           'name': _nameController.text,
@@ -150,7 +150,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     ),
                     const SizedBox(height: 20),
                     ElevatedButton(
-                      onPressed: () => _register(_isOwner ? 'business_owner' : 'employee'),
+                      onPressed: () => _register(_isOwner ? 'owner' : 'employee'),
                       child: const Text('Register'),
                     ),
                     TextButton(

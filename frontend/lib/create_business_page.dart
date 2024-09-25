@@ -32,7 +32,7 @@ class _CreateBusinessPageState extends State<CreateBusinessPage> {
         });
       }
       final response = await http.post(
-        Uri.parse('http://10.0.2.2:5000/api/business/create'),
+        Uri.parse('http://localhost:5000/api/business/create'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',

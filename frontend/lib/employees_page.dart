@@ -45,7 +45,7 @@ class _EmployeePageState extends State<EmployeePage> {
       }
       final responses = await Future.wait(employeeIds.map((id) async {
         final response = await http.post(
-          Uri.parse('http://10.0.2.2:5000/api/auth/user'),
+          Uri.parse('http://localhost:5000/api/auth/user'),
           headers: {
             'Content-Type': 'application/json',
             'Authorization': 'Bearer $token',

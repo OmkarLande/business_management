@@ -39,7 +39,7 @@ Future<void> _inviteEmployee() async {
       return;
     }
     final response = await http.post(
-      Uri.parse('http://10.0.2.2:5000/api/business/invite'), // Replace with your API endpoint
+      Uri.parse('http://localhost:5000/api/business/invite'), // Replace with your API endpoint
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token',
