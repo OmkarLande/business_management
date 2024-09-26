@@ -6,6 +6,8 @@ import 'package:jwt_decoder/jwt_decoder.dart';
 
 final storage = FlutterSecureStorage();
 
+//Amigos
+
 class CreateBusinessPage extends StatefulWidget {
   @override
   _CreateBusinessPageState createState() => _CreateBusinessPageState();
