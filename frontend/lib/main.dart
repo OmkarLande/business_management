@@ -5,24 +5,22 @@ import 'home_page.dart';
 import 'register_page.dart';
 import 'login_page.dart';
 import 'create_business_page.dart'; // Ensure you have this page created
+import 'customer_content_page.dart'; // Import the CustomerContentPage
 import 'package:jwt_decoder/jwt_decoder.dart';
 
 final storage = FlutterSecureStorage();
 
 void main() {
-  
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  
   Future<String?> _getUserRole() async {
     final token = await storage.read(key: 'jwt_token');
     if (token == null) {
       return null;
     }
     final decodedToken = JwtDecoder.decode(token);
-    
     return decodedToken['role'];
   }
 
@@ -40,7 +38,8 @@ class MyApp extends StatelessWidget {
               future: _getUserRole(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Scaffold(body: Center(child: CircularProgressIndicator()));
+                  return Scaffold(
+                      body: Center(child: CircularProgressIndicator()));
                 }
 
                 if (!snapshot.hasData) {
@@ -62,7 +61,8 @@ class MyApp extends StatelessWidget {
         '/home': (context) => HomePage(),
         '/create_business': (context) => CreateBusinessPage(),
         '/employees_home': (context) => EmployeeHomePage(),
-
+        '/customer_content': (context) => CustomerContentPage(
+            business: {}), // Update this with the appropriate business data
       },
     );
   }

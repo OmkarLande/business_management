@@ -18,11 +18,16 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   jwt_decoder: ^2.0.1
+  file_picker: ^8.1.2  # Add file_picker package
+  csv: ^6.0.0          # Add csv package
+  mailto: ^2.0.0       # Add mailto package for email functionality
+  url_launcher: ^6.1.7 # Add url_launcher package for launching email client
+  fl_chart: ^0.69.0
+  intl: ^0.17.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-
   flutter_lints: ^4.0.0
 
 flutter:
