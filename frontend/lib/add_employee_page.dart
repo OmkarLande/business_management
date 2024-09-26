@@ -39,7 +39,7 @@ Future<void> _inviteEmployee() async {
       return;
     }
     final response = await http.post(
-      Uri.parse('http://localhost:5000/api/business/invite'), // Replace with your API endpoint
+      Uri.parse('https://business-management-gagi.onrender.com/api/business/invite'), // Replace with your API endpoint
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token',

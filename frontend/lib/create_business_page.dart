@@ -32,7 +32,7 @@ class _CreateBusinessPageState extends State<CreateBusinessPage> {
         });
       }
       final response = await http.post(
-        Uri.parse('http://localhost:5000/api/business/create'),
+        Uri.parse('https://business-management-gagi.onrender.com/api/business/create'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',

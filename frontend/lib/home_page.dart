@@ -51,7 +51,7 @@ class _HomePageState extends State<HomePage> {
         });
       }
       final response = await http.get(
-        Uri.parse('http://localhost:5000/api/business/all'),
+        Uri.parse('https://business-management-gagi.onrender.com/api/business/all'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token', // Ensure token is sent in the header

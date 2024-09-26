@@ -40,7 +40,7 @@ class _EmployeeHomePageState extends State<EmployeeHomePage> with SingleTickerPr
 
     try {
       final response = await http.post(
-        Uri.parse('http://localhost:5000/api/business/employees/buisness'),
+        Uri.parse('https://business-management-gagi.onrender.com/api/business/employees/buisness'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',
@@ -82,7 +82,7 @@ class _EmployeeHomePageState extends State<EmployeeHomePage> with SingleTickerPr
 
     try {
       final response = await http.post(
-        Uri.parse('http://localhost:5000/api/auth/pending'),
+        Uri.parse('https://business-management-gagi.onrender.com/api/auth/pending'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',
@@ -131,7 +131,7 @@ class _EmployeeHomePageState extends State<EmployeeHomePage> with SingleTickerPr
 
     try {
       final response = await http.post(
-        Uri.parse('http://localhost:5000/api/business/accept'),
+        Uri.parse('https://business-management-gagi.onrender.com/api/business/accept'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',
@@ -167,7 +167,7 @@ class _EmployeeHomePageState extends State<EmployeeHomePage> with SingleTickerPr
 
     try {
       final response = await http.post(
-        Uri.parse('http://localhost:5000/api/business/reject'),
+        Uri.parse('https://business-management-gagi.onrender.com/api/business/reject'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',
