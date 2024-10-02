@@ -80,9 +80,9 @@ exports.acceptRequest = async (req, res) => {
 
     // Add employee to the business
     business.employees.push(userId);
-
+    const currUser = await User.findById(userId);
     // Remove the request from pendingRequests
-    business.pendingRequests = business.pendingRequests.filter(req => req.email !== req.user.email);
+    business.pendingRequests = business.pendingRequests.filter(req => req.email !== req.currUser.email);
 
     // Save the updated business document
     await business.save();
