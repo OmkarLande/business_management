@@ -1,28 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:frontend/theme/theme.dart';
 import 'employee_home_page.dart';
 import 'home_page.dart';
 import 'register_page.dart';
 import 'login_page.dart';
-import 'create_business_page.dart'; // Ensure you have this page created
+import 'create_business_page.dart';
+import 'customer_content_page.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 
-final storage = FlutterSecureStorage();
+const storage = FlutterSecureStorage();
 
 void main() {
-  
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  
+  const MyApp({super.key});
+
   Future<String?> _getUserRole() async {
     final token = await storage.read(key: 'jwt_token');
     if (token == null) {
       return null;
     }
     final decodedToken = JwtDecoder.decode(token);
-    
     return decodedToken['role'];
   }
 
@@ -30,9 +31,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Business Management System',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
+      theme: AppTheme.lightTheme, // Apply the light theme
+      darkTheme: AppTheme.darkTheme, // Apply the dark theme (optional)
+      themeMode: ThemeMode.system, // Use system theme setting (light/dark)
       debugShowCheckedModeBanner: false,
       initialRoute: '/',
       routes: {
@@ -40,29 +41,31 @@ class MyApp extends StatelessWidget {
               future: _getUserRole(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Scaffold(body: Center(child: CircularProgressIndicator()));
+                  return const Scaffold(
+                      body: Center(child: CircularProgressIndicator()));
                 }
 
                 if (!snapshot.hasData) {
-                  return LoginPage();
+                  return const LoginPage();
                 }
 
                 final role = snapshot.data;
                 if (role == 'owner') {
-                  return HomePage();
+                  return const HomePage();
                 } else if (role == 'employee') {
-                  return EmployeeHomePage();
+                  return const EmployeeHomePage();
                 } else {
-                  return LoginPage();
+                  return const LoginPage();
                 }
               },
             ),
-        '/login': (context) => LoginPage(),
-        '/register': (context) => RegisterPage(),
-        '/home': (context) => HomePage(),
-        '/create_business': (context) => CreateBusinessPage(),
-        '/employees_home': (context) => EmployeeHomePage(),
-
+        '/login': (context) => const LoginPage(),
+        '/register': (context) => const RegisterPage(),
+        '/home': (context) => const HomePage(),
+        '/create_business': (context) => const CreateBusinessPage(),
+        '/employees_home': (context) => const EmployeeHomePage(),
+        '/customer_content': (context) => const CustomerContentPage(
+            business: {}), // Update this with the appropriate business data
       },
     );
   }

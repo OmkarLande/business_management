@@ -4,9 +4,11 @@ import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:jwt_decoder/jwt_decoder.dart'; 
 
-final storage = FlutterSecureStorage();
+const storage = FlutterSecureStorage();
 
 class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
+
   @override
   _LoginPageState createState() => _LoginPageState();
 }
@@ -15,17 +17,26 @@ class _LoginPageState extends State<LoginPage> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  bool _isLoading = false; // New loading state
 
   Future<void> _login() async {
     if (_formKey.currentState!.validate()) {
+      setState(() {
+        _isLoading = true; // Start loading
+      });
+
       final response = await http.post(
-        Uri.parse('http://localhost:5000/api/auth/login'),
+        Uri.parse('https://business-management-gagi.onrender.com/api/auth/login'),
         headers: {'Content-Type': 'application/json'},
         body: json.encode({
           'email': _emailController.text,
           'password': _passwordController.text,
         }),
       );
+
+      setState(() {
+        _isLoading = false; // Stop loading after request completes
+      });
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
@@ -52,7 +63,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Login')),
+      appBar: AppBar(title: const Text('Login')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
@@ -61,7 +72,7 @@ class _LoginPageState extends State<LoginPage> {
             children: [
               TextFormField(
                 controller: _emailController,
-                decoration: InputDecoration(labelText: 'Email'),
+                decoration: const InputDecoration(labelText: 'Email'),
                 keyboardType: TextInputType.emailAddress,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -75,7 +86,7 @@ class _LoginPageState extends State<LoginPage> {
               ),
               TextFormField(
                 controller: _passwordController,
-                decoration: InputDecoration(labelText: 'Password'),
+                decoration: const InputDecoration(labelText: 'Password'),
                 obscureText: true,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -84,16 +95,28 @@ class _LoginPageState extends State<LoginPage> {
                   return null;
                 },
               ),
-              SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: _login,
-                child: Text('Login'),
+              const SizedBox(height: 20),
+              Stack(
+                alignment: Alignment.center,
+                children: [
+                  ElevatedButton(
+                    onPressed: _isLoading ? null : _login,
+                    child: const Text('Login'),
+                  ),
+                  if (_isLoading)
+                    const Positioned.fill(
+                      child: Align(
+                        alignment: Alignment.center,
+                        child: CircularProgressIndicator(),
+                      ),
+                    ),
+                ],
               ),
               TextButton(
                 onPressed: () {
                   Navigator.pushNamed(context, '/register'); // Navigate to register page
                 },
-                child: Text('Don\'t have an account? Register'),
+                child: const Text('Don\'t have an account? Register'),
               ),
             ],
           ),

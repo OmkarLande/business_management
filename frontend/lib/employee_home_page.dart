@@ -3,9 +3,11 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-final storage = FlutterSecureStorage();
+const storage = FlutterSecureStorage();
 
 class EmployeeHomePage extends StatefulWidget {
+  const EmployeeHomePage({super.key});
+
   @override
   _EmployeeHomePageState createState() => _EmployeeHomePageState();
 }
@@ -40,13 +42,12 @@ class _EmployeeHomePageState extends State<EmployeeHomePage> with SingleTickerPr
 
     try {
       final response = await http.post(
-        Uri.parse('http://localhost:5000/api/business/employees/buisness'),
+        Uri.parse('https://business-management-gagi.onrender.com/api/business/employees/buisness'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',
         },
       );
-      // print("Response: ${response.body}");
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         setState(() {
@@ -66,7 +67,6 @@ class _EmployeeHomePageState extends State<EmployeeHomePage> with SingleTickerPr
         _isLoadingBusinesses = false;
       });
     }
-    // print("Businesses: $_businesses");
   }
 
   Future<void> _fetchPendingRequests() async {
@@ -82,7 +82,7 @@ class _EmployeeHomePageState extends State<EmployeeHomePage> with SingleTickerPr
 
     try {
       final response = await http.post(
-        Uri.parse('http://localhost:5000/api/auth/pending'),
+        Uri.parse('https://business-management-gagi.onrender.com/api/auth/pending'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',
@@ -92,7 +92,7 @@ class _EmployeeHomePageState extends State<EmployeeHomePage> with SingleTickerPr
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         final userList = data['user'] as List<dynamic>;
-        
+
         setState(() {
           _pendingRequests = userList.map((item) {
             return {
@@ -102,10 +102,7 @@ class _EmployeeHomePageState extends State<EmployeeHomePage> with SingleTickerPr
             };
           }).toList();
           _isLoadingRequests = false;
-        
-        }
-        );
-          
+        });
       } else {
         setState(() {
           _request_error = 'Failed to load pending requests';
@@ -119,7 +116,6 @@ class _EmployeeHomePageState extends State<EmployeeHomePage> with SingleTickerPr
         _isLoadingRequests = false;
       });
     }
-    // print("Pending Requests: $_pendingRequests");
   }
 
   Future<void> _acceptRequest(String businessId) async {
@@ -131,23 +127,21 @@ class _EmployeeHomePageState extends State<EmployeeHomePage> with SingleTickerPr
 
     try {
       final response = await http.post(
-        Uri.parse('http://localhost:5000/api/business/accept'),
+        Uri.parse('https://business-management-gagi.onrender.com/api/business/accept'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',
         },
         body: json.encode({'businessId': businessId}),
       );
-      // print("Business ID: $businessId");
-      // print("Response: ${response.body}");
-      // print("Status Code: ${response.statusCode}");
+
       if (response.statusCode == 200) {
         // Successfully accepted the request, refresh pending requests
         _fetchPendingRequests();
         _fetchBusinesses(); // Optionally refresh businesses if needed
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to accept request')),
+          const SnackBar(content: Text('Failed to accept request')),
         );
       }
     } catch (e) {
@@ -167,7 +161,7 @@ class _EmployeeHomePageState extends State<EmployeeHomePage> with SingleTickerPr
 
     try {
       final response = await http.post(
-        Uri.parse('http://localhost:5000/api/business/reject'),
+        Uri.parse('https://business-management-gagi.onrender.com/api/business/reject'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',
@@ -180,7 +174,7 @@ class _EmployeeHomePageState extends State<EmployeeHomePage> with SingleTickerPr
         _fetchPendingRequests();
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to reject request')),
+          const SnackBar(content: Text('Failed to reject request')),
         );
       }
     } catch (e) {
@@ -191,14 +185,20 @@ class _EmployeeHomePageState extends State<EmployeeHomePage> with SingleTickerPr
     }
   }
 
+  // Logout method
+  Future<void> _logout() async {
+    await storage.delete(key: 'jwt_token'); // Clear the token
+    Navigator.pushReplacementNamed(context, '/login'); // Navigate to login
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Employee Dashboard'),
+        title: const Text('Employee Dashboard'),
         bottom: TabBar(
           controller: _tabController,
-          tabs: [
+          tabs: const [
             Tab(text: 'Businesses'),
             Tab(text: 'Pending Requests'),
           ],
@@ -211,12 +211,18 @@ class _EmployeeHomePageState extends State<EmployeeHomePage> with SingleTickerPr
           _buildPendingRequestsTab(),
         ],
       ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: _logout, // Call the logout method on press
+        label: const Text('Logout'),
+        icon: const Icon(Icons.logout),
+        backgroundColor: const Color(0xFFFFA500), // Set to your accent color
+      ),
     );
   }
 
   Widget _buildBusinessesTab() {
     return _isLoadingBusinesses
-        ? Center(child: CircularProgressIndicator())
+        ? const Center(child: CircularProgressIndicator())
         : _business_error != null
             ? Center(child: Text(_business_error!))
             : ListView.builder(
@@ -257,13 +263,13 @@ class _EmployeeHomePageState extends State<EmployeeHomePage> with SingleTickerPr
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           IconButton(
-                            icon: Icon(Icons.check),
+                            icon: const Icon(Icons.check),
                             onPressed: () {
                               _acceptRequest(businessId);
                             },
                           ),
                           IconButton(
-                            icon: Icon(Icons.close),
+                            icon: const Icon(Icons.close),
                             onPressed: () {
                               _rejectRequest(businessId);
                             },

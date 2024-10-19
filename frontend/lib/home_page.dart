@@ -3,11 +3,13 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'business_detail_page.dart'; // Import the new page
-import 'package:jwt_decoder/jwt_decoder.dart'; 
+import 'package:jwt_decoder/jwt_decoder.dart';
 
-final storage = FlutterSecureStorage();
+const storage = FlutterSecureStorage();
 
 class HomePage extends StatefulWidget {
+  const HomePage({super.key});
+
   @override
   _HomePageState createState() => _HomePageState();
 }
@@ -51,7 +53,7 @@ class _HomePageState extends State<HomePage> {
         });
       }
       final response = await http.get(
-        Uri.parse('http://localhost:5000/api/business/all'),
+        Uri.parse('https://business-management-gagi.onrender.com/api/business/all'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token', // Ensure token is sent in the header
@@ -88,7 +90,7 @@ class _HomePageState extends State<HomePage> {
   String _truncateDescription(String? description) {
     if (description == null) return '';
     final words = description.split(' ');
-    return words.length > 7 ? words.sublist(0, 7).join(' ') + '...' : description;
+    return words.length > 7 ? '${words.sublist(0, 7).join(' ')}...' : description;
   }
 
   void _createBusiness() {
@@ -112,36 +114,43 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Home Page'),
+        title: const Text('Home Page'),
         actions: [
           IconButton(
-            icon: Icon(Icons.refresh), // Refresh icon
+            icon: const Icon(Icons.refresh),
             onPressed: _refresh,
           ),
           IconButton(
-            icon: Icon(Icons.logout),
+            icon: const Icon(Icons.logout),
             onPressed: _logout,
           ),
-          SizedBox(width: 16),
+          const SizedBox(width: 16),
         ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: _isLoading
-            ? Center(child: CircularProgressIndicator())
+            ? const Center(child: CircularProgressIndicator())
             : _error != null
-                ? Center(child: Text(_error!))
+                ? Center(child: Text(_error!, style: TextStyle(color: Colors.red)))
                 : ListView.builder(
                     itemCount: _businesses.length,
                     itemBuilder: (context, index) {
                       final business = _businesses[index];
                       return Card(
                         margin: const EdgeInsets.symmetric(vertical: 8.0),
+                        color: Theme.of(context).cardColor, // Use card color from theme
                         child: ListTile(
                           contentPadding: const EdgeInsets.all(16.0),
-                          title: Text(business['name']),
-                          subtitle: Text(_truncateDescription(business['description'])),
-                          onTap: () => _viewBusinessDetails(business), // Navigate to business details page
+                          title: Text(
+                            business['name'],
+                            style: Theme.of(context).textTheme.titleLarge, // Apply headline style
+                          ),
+                          subtitle: Text(
+                            _truncateDescription(business['description']),
+                            style: Theme.of(context).textTheme.titleMedium, // Apply subtitle style
+                          ),
+                          onTap: () => _viewBusinessDetails(business),
                         ),
                       );
                     },
@@ -149,7 +158,8 @@ class _HomePageState extends State<HomePage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _createBusiness,
-        child: Icon(Icons.add),
+        backgroundColor: Theme.of(context).primaryColor, // Ensure FAB uses primary color
+        child: const Icon(Icons.add),
       ),
     );
   }

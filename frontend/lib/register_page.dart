@@ -3,9 +3,11 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-final storage = FlutterSecureStorage();
+const storage = FlutterSecureStorage();
 
 class RegisterPage extends StatefulWidget {
+  const RegisterPage({super.key});
+
   @override
   _RegisterPageState createState() => _RegisterPageState();
 }
@@ -17,11 +19,16 @@ class _RegisterPageState extends State<RegisterPage> {
   final _phoneController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   bool _isOwner = true; // Toggle between Business Owner and Employee
+  bool _isLoading = false; // Loading state
 
   void _register(String role) async {
     if (_formKey.currentState!.validate()) {
+      setState(() {
+        _isLoading = true; // Start loading
+      });
+
       final response = await http.post(
-        Uri.parse('http://localhost:5000/api/auth/register'),
+        Uri.parse('https://business-management-gagi.onrender.com/api/auth/register'),
         headers: {'Content-Type': 'application/json'},
         body: json.encode({
           'name': _nameController.text,
@@ -31,6 +38,10 @@ class _RegisterPageState extends State<RegisterPage> {
           'role': role,
         }),
       );
+
+      setState(() {
+        _isLoading = false; // Stop loading after request completes
+      });
 
       if (response.statusCode == 201) {
         final data = json.decode(response.body);
@@ -47,7 +58,7 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Register')),
+      appBar: AppBar(title: const Text('Register')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -57,7 +68,8 @@ class _RegisterPageState extends State<RegisterPage> {
               children: [
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    foregroundColor: _isOwner ? Colors.orange : Colors.black, backgroundColor: Colors.transparent,
+                    foregroundColor: _isOwner ? Colors.orange : Colors.black,
+                    backgroundColor: Colors.transparent,
                     elevation: 0,
                     side: BorderSide(
                       color: _isOwner ? Colors.orange : Colors.black,
@@ -69,12 +81,13 @@ class _RegisterPageState extends State<RegisterPage> {
                       _isOwner = true;
                     });
                   },
-                  child: Text('Business Owner'),
+                  child: const Text('Business Owner'),
                 ),
                 const SizedBox(width: 10),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    foregroundColor: !_isOwner ? Colors.orange : Colors.black, backgroundColor: Colors.transparent,
+                    foregroundColor: !_isOwner ? Colors.orange : Colors.black,
+                    backgroundColor: Colors.transparent,
                     elevation: 0,
                     side: BorderSide(
                       color: !_isOwner ? Colors.orange : Colors.black,
@@ -86,7 +99,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       _isOwner = false;
                     });
                   },
-                  child: Text('Employee'),
+                  child: const Text('Employee'),
                 ),
               ],
             ),
@@ -98,7 +111,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   children: [
                     TextFormField(
                       controller: _nameController,
-                      decoration: InputDecoration(labelText: 'Name'),
+                      decoration: const InputDecoration(labelText: 'Name'),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Please enter your name';
@@ -108,7 +121,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     ),
                     TextFormField(
                       controller: _emailController,
-                      decoration: InputDecoration(labelText: 'Email'),
+                      decoration: const InputDecoration(labelText: 'Email'),
                       keyboardType: TextInputType.emailAddress,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
@@ -122,7 +135,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     ),
                     TextFormField(
                       controller: _passwordController,
-                      decoration: InputDecoration(labelText: 'Password'),
+                      decoration: const InputDecoration(labelText: 'Password'),
                       obscureText: true,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
@@ -136,7 +149,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     ),
                     TextFormField(
                       controller: _phoneController,
-                      decoration: InputDecoration(labelText: 'Phone'),
+                      decoration: const InputDecoration(labelText: 'Phone'),
                       keyboardType: TextInputType.phone,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
@@ -149,9 +162,21 @@ class _RegisterPageState extends State<RegisterPage> {
                       },
                     ),
                     const SizedBox(height: 20),
-                    ElevatedButton(
-                      onPressed: () => _register(_isOwner ? 'owner' : 'employee'),
-                      child: const Text('Register'),
+                    Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        ElevatedButton(
+                          onPressed: _isLoading ? null : () => _register(_isOwner ? 'owner' : 'employee'),
+                          child: const Text('Register'),
+                        ),
+                        if (_isLoading)
+                          const Positioned.fill(
+                            child: Align(
+                              alignment: Alignment.center,
+                              child: CircularProgressIndicator(),
+                            ),
+                          ),
+                      ],
                     ),
                     TextButton(
                       onPressed: () {
