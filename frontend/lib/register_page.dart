@@ -28,7 +28,7 @@ class _RegisterPageState extends State<RegisterPage> {
       });
 
       final response = await http.post(
-        Uri.parse('https://business-management-gagi.onrender.com/api/auth/register'),
+        Uri.parse('http://192.168.1.106:5000/api/auth/register'),
         headers: {'Content-Type': 'application/json'},
         body: json.encode({
           'name': _nameController.text,
@@ -59,53 +59,55 @@ class _RegisterPageState extends State<RegisterPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Register')),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    foregroundColor: _isOwner ? Colors.orange : Colors.black,
-                    backgroundColor: Colors.transparent,
-                    elevation: 0,
-                    side: BorderSide(
-                      color: _isOwner ? Colors.orange : Colors.black,
-                      width: 1,
+      body: Center(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      foregroundColor: _isOwner ? Colors.orange : Colors.black,
+                      backgroundColor: Colors.transparent,
+                      elevation: 0,
+                      side: BorderSide(
+                        color: _isOwner ? Colors.orange : Colors.black,
+                        width: 1,
+                      ),
                     ),
+                    onPressed: () {
+                      setState(() {
+                        _isOwner = true;
+                      });
+                    },
+                    child: const Text('Business Owner'),
                   ),
-                  onPressed: () {
-                    setState(() {
-                      _isOwner = true;
-                    });
-                  },
-                  child: const Text('Business Owner'),
-                ),
-                const SizedBox(width: 10),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    foregroundColor: !_isOwner ? Colors.orange : Colors.black,
-                    backgroundColor: Colors.transparent,
-                    elevation: 0,
-                    side: BorderSide(
-                      color: !_isOwner ? Colors.orange : Colors.black,
-                      width: 1,
+                  const SizedBox(width: 10),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      foregroundColor: !_isOwner ? Colors.orange : Colors.black,
+                      backgroundColor: Colors.transparent,
+                      elevation: 0,
+                      side: BorderSide(
+                        color: !_isOwner ? Colors.orange : Colors.black,
+                        width: 1,
+                      ),
                     ),
+                    onPressed: () {
+                      setState(() {
+                        _isOwner = false;
+                      });
+                    },
+                    child: const Text('Employee'),
                   ),
-                  onPressed: () {
-                    setState(() {
-                      _isOwner = false;
-                    });
-                  },
-                  child: const Text('Employee'),
-                ),
-              ],
-            ),
-            const SizedBox(height: 20),
-            Expanded(
-              child: Form(
+                ],
+              ),
+              const SizedBox(height: 20),
+              Form(
                 key: _formKey,
                 child: Column(
                   children: [
@@ -119,6 +121,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         return null;
                       },
                     ),
+                    const SizedBox(height: 16),
                     TextFormField(
                       controller: _emailController,
                       decoration: const InputDecoration(labelText: 'Email'),
@@ -133,6 +136,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         return null;
                       },
                     ),
+                    const SizedBox(height: 16),
                     TextFormField(
                       controller: _passwordController,
                       decoration: const InputDecoration(labelText: 'Password'),
@@ -147,6 +151,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         return null;
                       },
                     ),
+                    const SizedBox(height: 16),
                     TextFormField(
                       controller: _phoneController,
                       decoration: const InputDecoration(labelText: 'Phone'),
@@ -166,7 +171,9 @@ class _RegisterPageState extends State<RegisterPage> {
                       alignment: Alignment.center,
                       children: [
                         ElevatedButton(
-                          onPressed: _isLoading ? null : () => _register(_isOwner ? 'owner' : 'employee'),
+                          onPressed: _isLoading
+                              ? null
+                              : () => _register(_isOwner ? 'owner' : 'employee'),
                           child: const Text('Register'),
                         ),
                         if (_isLoading)
@@ -187,8 +194,8 @@ class _RegisterPageState extends State<RegisterPage> {
                   ],
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

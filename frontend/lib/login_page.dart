@@ -26,7 +26,7 @@ class _LoginPageState extends State<LoginPage> {
       });
 
       final response = await http.post(
-        Uri.parse('https://business-management-gagi.onrender.com/api/auth/login'),
+        Uri.parse('http://192.168.1.106:5000/api/auth/login'),
         headers: {'Content-Type': 'application/json'},
         body: json.encode({
           'email': _emailController.text,
@@ -64,61 +64,67 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Login')),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: [
-              TextFormField(
-                controller: _emailController,
-                decoration: const InputDecoration(labelText: 'Email'),
-                keyboardType: TextInputType.emailAddress,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter your email';
-                  }
-                  if (!RegExp(r'^\S+@\S+\.\S+$').hasMatch(value)) {
-                    return 'Enter a valid email address';
-                  }
-                  return null;
-                },
-              ),
-              TextFormField(
-                controller: _passwordController,
-                decoration: const InputDecoration(labelText: 'Password'),
-                obscureText: true,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter your password';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 20),
-              Stack(
-                alignment: Alignment.center,
-                children: [
-                  ElevatedButton(
-                    onPressed: _isLoading ? null : _login,
-                    child: const Text('Login'),
-                  ),
-                  if (_isLoading)
-                    const Positioned.fill(
-                      child: Align(
-                        alignment: Alignment.center,
-                        child: CircularProgressIndicator(),
-                      ),
+      body: Center(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(16.0),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center, // Center vertically
+              crossAxisAlignment: CrossAxisAlignment.stretch, // Stretch the width of the input fields
+              children: [
+                TextFormField(
+                  controller: _emailController,
+                  decoration: const InputDecoration(labelText: 'Email'),
+                  keyboardType: TextInputType.emailAddress,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter your email';
+                    }
+                    if (!RegExp(r'^\S+@\S+\.\S+$').hasMatch(value)) {
+                      return 'Enter a valid email address';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 16),
+                TextFormField(
+                  controller: _passwordController,
+                  decoration: const InputDecoration(labelText: 'Password'),
+                  obscureText: true,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter your password';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 20),
+                Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    ElevatedButton(
+                      onPressed: _isLoading ? null : _login,
+                      child: const Text('Login'),
                     ),
-                ],
-              ),
-              TextButton(
-                onPressed: () {
-                  Navigator.pushNamed(context, '/register'); // Navigate to register page
-                },
-                child: const Text('Don\'t have an account? Register'),
-              ),
-            ],
+                    if (_isLoading)
+                      const Positioned.fill(
+                        child: Align(
+                          alignment: Alignment.center,
+                          child: CircularProgressIndicator(),
+                        ),
+                      ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                TextButton(
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/register'); // Navigate to register page
+                  },
+                  child: const Text('Don\'t have an account? Register'),
+                ),
+              ],
+            ),
           ),
         ),
       ),

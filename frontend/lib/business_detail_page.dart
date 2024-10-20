@@ -41,7 +41,7 @@ class BusinessDetailPage extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const InventoryPage(),
+                        builder: (context) => InventoryPage(business: business,),
                       ),
                     );
                   },
