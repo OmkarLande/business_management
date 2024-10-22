@@ -14,19 +14,19 @@ class AppTheme {
   static final ThemeData lightTheme = ThemeData(
     primaryColor: primaryColor, // Primary color for the app
     scaffoldBackgroundColor: backgroundColor, // Background color for scaffold
-    appBarTheme: AppBarTheme(
+    appBarTheme: const AppBarTheme(
       backgroundColor: primaryColor, // AppBar background color
-      titleTextStyle: const TextStyle(
+      titleTextStyle: TextStyle(
         color: Colors.white, // AppBar title color
         fontSize: 20, // AppBar title font size
         fontWeight: FontWeight.bold,
       ),
-      iconTheme: const IconThemeData(color: Colors.white), // AppBar icon color
+      iconTheme: IconThemeData(color: Colors.white), // AppBar icon color
       elevation: 4, // AppBar shadow
     ),
-    textTheme: TextTheme(
-      bodyLarge: TextStyle(fontSize: 16.0, color: textColor), // Default body text
-      bodyMedium: TextStyle(fontSize: 14.0, color: textColor), // Secondary body text
+    textTheme: const TextTheme(
+      bodyLarge: TextStyle(fontSize: 16.0, color: Colors.white), // Default body text
+      bodyMedium: TextStyle(fontSize: 14.0, color: Colors.white), // Secondary body text
       titleLarge: TextStyle(fontSize: 20.0, color: primaryColor, fontWeight: FontWeight.bold), // Title styles
     ),
     buttonTheme: const ButtonThemeData(
@@ -56,7 +56,7 @@ class AppTheme {
     primaryColor: Colors.black,
     scaffoldBackgroundColor: Colors.black,
     appBarTheme: const AppBarTheme(
-      backgroundColor: Colors.black,
+      backgroundColor: Color.fromARGB(255, 87, 87, 87),
       titleTextStyle: TextStyle(
         color: Colors.white,
         fontSize: 20,

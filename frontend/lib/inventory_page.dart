@@ -71,6 +71,7 @@ class _InventoryPageState extends State<InventoryPage> {
   }
 
   Future<void> _deleteProduct(String productId) async {
+    print( 'URL = '+'http://192.168.1.106:5000/api/inventory/${widget.business['_id']}/products/$productId');
     try {
       final response = await http.delete(Uri.parse('http://192.168.1.106:5000/api/inventory/${widget.business['_id']}/products/$productId'));
 
