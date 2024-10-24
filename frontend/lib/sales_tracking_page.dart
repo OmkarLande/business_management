@@ -125,38 +125,64 @@ class _SalesTrackingPageState extends State<SalesTrackingPage> {
                       child: Text(
                           'No sales data available. Upload a CSV to see the graph.'))
                   : LineChart(
-                      LineChartData(
-                        titlesData: FlTitlesData(
-                          bottomTitles: AxisTitles(
-                            sideTitles: SideTitles(
-                              showTitles: true,
-                              getTitlesWidget: (value, meta) {
-                                final date =
-                                    DateTime.fromMillisecondsSinceEpoch(
-                                        value.toInt());
-                                final formattedDate =
-                                    DateFormat('dd-MM').format(date);
-                                return Text(formattedDate);
-                              },
-                            ),
-                          ),
-                          leftTitles: const AxisTitles(
-                              sideTitles: SideTitles(showTitles: true)),
-                        ),
-                        borderData: FlBorderData(show: true),
-                        gridData: const FlGridData(show: true),
-                        lineBarsData: [
-                          LineChartBarData(
-                            spots: spots,
-                            isCurved: true,
-                            color: Colors.blue,
-                            barWidth: 4,
-                            isStrokeCapRound: true,
-                            belowBarData: BarAreaData(show: false),
-                          ),
-                        ],
-                      ),
-                    ),
+  LineChartData(
+    titlesData: FlTitlesData(
+      bottomTitles: AxisTitles(
+        sideTitles: SideTitles(
+          showTitles: true,
+          getTitlesWidget: (value, meta) {
+            final date = DateTime.fromMillisecondsSinceEpoch(value.toInt());
+            final formattedDate = DateFormat('dd-MM').format(date);
+
+            // Rotate the text by 45 degrees to prevent overlap
+            return SideTitleWidget(
+              axisSide: meta.axisSide,
+              space: 8.0, // Add some spacing
+              child: Transform.rotate(
+                angle: -45 * 3.1415927 / 180, // Convert 45 degrees to radians
+                child: Text(formattedDate, style: const TextStyle(fontSize: 10)),
+              ),
+            );
+          },
+        ),
+      ),
+      topTitles: AxisTitles(
+        sideTitles: SideTitles(showTitles: false), // Disable top titles
+      ),
+      leftTitles: AxisTitles(
+        sideTitles: SideTitles(
+          showTitles: false,
+          interval: 50, // Show labels every 50 units
+          getTitlesWidget: (value, meta) {
+            if (value % 50 == 0) {
+              return Text(value.toInt().toString(),
+                  style: const TextStyle(fontSize: 10));
+            }
+            return Container(); // Hide labels that don't match the interval
+          },
+        ),
+      ),
+      rightTitles: AxisTitles(
+        sideTitles: SideTitles(showTitles: false), // Disable right titles
+      ),
+    ),
+    borderData: FlBorderData(show: true),
+    gridData: const FlGridData(show: true),
+    lineBarsData: [
+      LineChartBarData(
+        spots: spots,
+        isCurved: true,
+        color: Colors.blue,
+        barWidth: 4,
+        isStrokeCapRound: true,
+        belowBarData: BarAreaData(show: false),
+      ),
+    ],
+  ),
+)
+
+
+
             ),
           ],
         ),

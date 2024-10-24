@@ -25,8 +25,8 @@ class AppTheme {
       elevation: 4, // AppBar shadow
     ),
     textTheme: const TextTheme(
-      bodyLarge: TextStyle(fontSize: 16.0, color: Colors.white), // Default body text
-      bodyMedium: TextStyle(fontSize: 14.0, color: Colors.white), // Secondary body text
+      bodyLarge: TextStyle(fontSize: 16.0, color: Colors.black), // Default body text
+      bodyMedium: TextStyle(fontSize: 14.0, color: Colors.black), // Secondary body text
       titleLarge: TextStyle(fontSize: 20.0, color: primaryColor, fontWeight: FontWeight.bold), // Title styles
     ),
     buttonTheme: const ButtonThemeData(

@@ -8,6 +8,7 @@ import 'login_page.dart';
 import 'create_business_page.dart';
 import 'customer_content_page.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
+import 'splash_screen.dart';  // Import the SplashScreen file
 
 const storage = FlutterSecureStorage();
 
@@ -31,41 +32,19 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Business Management System',
-      theme: AppTheme.lightTheme, // Apply the light theme
-      darkTheme: AppTheme.darkTheme, // Apply the dark theme (optional)
-      themeMode: ThemeMode.system, // Use system theme setting (light/dark)
+      theme: AppTheme.lightTheme,
+      darkTheme: AppTheme.darkTheme,
+      themeMode: ThemeMode.system,
       debugShowCheckedModeBanner: false,
       initialRoute: '/',
       routes: {
-        '/': (context) => FutureBuilder<String?>(
-              future: _getUserRole(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Scaffold(
-                      body: Center(child: CircularProgressIndicator()));
-                }
-
-                if (!snapshot.hasData) {
-                  return const LoginPage();
-                }
-
-                final role = snapshot.data;
-                if (role == 'owner') {
-                  return const HomePage();
-                } else if (role == 'employee') {
-                  return const EmployeeHomePage();
-                } else {
-                  return const LoginPage();
-                }
-              },
-            ),
+        '/': (context) => const SplashScreen(), // Use SplashScreen as initial route
         '/login': (context) => const LoginPage(),
         '/register': (context) => const RegisterPage(),
         '/home': (context) => const HomePage(),
         '/create_business': (context) => const CreateBusinessPage(),
         '/employees_home': (context) => const EmployeeHomePage(),
-        '/customer_content': (context) => const CustomerContentPage(
-            business: {}), // Update this with the appropriate business data
+        '/customer_content': (context) => const CustomerContentPage(business: {}),
       },
     );
   }
