@@ -47,11 +47,17 @@ class _SplashScreenState extends State<SplashScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: Lottie.asset(
-          'assets/animations/splash.json', // Path to your Lottie animation
-          width: 200,
-          height: 200,
-          fit: BoxFit.cover,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Lottie.asset(
+              'assets/animations/splash.json', // Path to your Lottie animation
+              width: 200,
+              height: 200,
+              fit: BoxFit.cover,
+            ),
+            const Text("BizzMaster",style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),)
+          ],
         ),
       ),
     );
