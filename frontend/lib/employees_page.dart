@@ -5,12 +5,12 @@ import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:jwt_decoder/jwt_decoder.dart'; 
 
-final storage = FlutterSecureStorage();
+const storage = FlutterSecureStorage();
 
 class EmployeePage extends StatefulWidget {
   final Map<String, dynamic> business;
 
-  EmployeePage({required this.business });
+  const EmployeePage({super.key, required this.business });
 
   @override
   _EmployeePageState createState() => _EmployeePageState();
@@ -45,7 +45,7 @@ class _EmployeePageState extends State<EmployeePage> {
       }
       final responses = await Future.wait(employeeIds.map((id) async {
         final response = await http.post(
-          Uri.parse('http://localhost:5000/api/auth/user'),
+          Uri.parse('http://192.168.0.102:5000/api/auth/user'),
           headers: {
             'Content-Type': 'application/json',
             'Authorization': 'Bearer $token',
@@ -83,7 +83,7 @@ class _EmployeePageState extends State<EmployeePage> {
         title: Text('Employees of ${widget.business['name']}'),
         actions: [
           IconButton(
-            icon: Icon(Icons.refresh),
+            icon: const Icon(Icons.refresh),
             onPressed: _fetchEmployees,
           ),
         ],
@@ -91,7 +91,7 @@ class _EmployeePageState extends State<EmployeePage> {
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: _isLoading
-            ? Center(child: CircularProgressIndicator())
+            ? const Center(child: CircularProgressIndicator())
             : _error != null
                 ? Center(child: Text(_error!))
                 : ListView.builder(
@@ -123,8 +123,8 @@ class _EmployeePageState extends State<EmployeePage> {
             ),
           );
         },
-        child: Icon(Icons.add),
         tooltip: 'Add Employee',
+        child: const Icon(Icons.add),
       ),
     );
   }

@@ -4,9 +4,13 @@ import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:jwt_decoder/jwt_decoder.dart'; 
 
-final storage = FlutterSecureStorage();
+const storage = FlutterSecureStorage();
+
+//Amigos
 
 class CreateBusinessPage extends StatefulWidget {
+  const CreateBusinessPage({super.key});
+
   @override
   _CreateBusinessPageState createState() => _CreateBusinessPageState();
 }
@@ -27,12 +31,12 @@ class _CreateBusinessPageState extends State<CreateBusinessPage> {
       final role = decodedToken['role'];
       if (role != 'owner') {
         setState(() {
-          var _error = 'You do not have permission to view this page';
+          var error0 = 'You do not have permission to view this page';
           return;
         });
       }
       final response = await http.post(
-        Uri.parse('http://localhost:5000/api/business/create'),
+        Uri.parse('http://192.168.0.102:5000/api/business/create'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',
@@ -45,7 +49,7 @@ class _CreateBusinessPageState extends State<CreateBusinessPage> {
 
       if (response.statusCode == 201) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Business created successfully')),
+          const SnackBar(content: Text('Business created successfully')),
         );
         Navigator.pop(context);
       } else {
@@ -61,7 +65,7 @@ class _CreateBusinessPageState extends State<CreateBusinessPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Create Business'),
+        title: const Text('Create Business'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -71,7 +75,7 @@ class _CreateBusinessPageState extends State<CreateBusinessPage> {
             children: [
               TextFormField(
                 controller: _nameController,
-                decoration: InputDecoration(labelText: 'Business Name'),
+                decoration: const InputDecoration(labelText: 'Business Name'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter the business name';
@@ -81,7 +85,7 @@ class _CreateBusinessPageState extends State<CreateBusinessPage> {
               ),
               TextFormField(
                 controller: _descriptionController,
-                decoration: InputDecoration(labelText: 'Description'),
+                decoration: const InputDecoration(labelText: 'Description'),
                 maxLines: 4,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
