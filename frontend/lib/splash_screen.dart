@@ -56,7 +56,7 @@ class _SplashScreenState extends State<SplashScreen> {
               height: 200,
               fit: BoxFit.cover,
             ),
-            const Text("BizzMaster",style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),)
+            const Text("BizMaster",style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),)
           ],
         ),
       ),
